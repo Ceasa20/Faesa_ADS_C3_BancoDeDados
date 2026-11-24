@@ -1,8 +1,8 @@
 <!--
-# Exemplo de Sistema em Python fazendo CRUD no Oracle
+# Exemplo de Sistema em Python fazendo CRUD no mongoDB
 
-Esse sistema de exemplo é composto por um conjunto de tabelas que representam pedidos de vendas, contendo tabelas como: clientes, fornecedores, produtos, pedidos e itens de pedido.
-
+Esse sistema irá ser composto por um conjunto de tabelas que representam pedidos de vendas, contendo tabelas como: clientes, fornecedores, produtos, pedidos e itens de pedido.
+<!--
 O sistema exige que as tabelas existam, então basta executar o script Python a seguir para criação das tabelas e preenchimento de dados de exemplos:
 ```shell
 ~$ python create_tables_and_records.py
@@ -268,3 +268,4 @@ python test.py
 
 A execução foi validada com sucesso, incluindo conexão com o Oracle, execução de consultas SQL e retorno de resultados em DataFrames e JSON.
 
+-->
