@@ -1,4 +1,3 @@
-<!--
 # Exemplo de Sistema em Python fazendo CRUD no mongoDB
 
 Esse sistema irá ser composto por um conjunto de tabelas que representam pedidos de vendas, contendo tabelas como: clientes, fornecedores, produtos, pedidos e itens de pedido.
