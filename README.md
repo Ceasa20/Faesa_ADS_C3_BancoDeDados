@@ -1,119 +1,45 @@
-# Exemplo de Sistema em Python fazendo CRUD no mongoDB
+# Sistema de Gerenciamento de Locadora de Veículos — Python & MongoDB
 
-Sistema desenvolvido em Python para gerenciar uma locadora de veículos utilizando um banco de dados Oracle.
+Aplicação de linha de comando (CLI) desenvolvida em Python para o gerenciamento operacional de uma locadora de veículos, utilizando o **MongoDB** como banco de dados orientado a documentos por meio do driver oficial **PyMongo**. 
 
-## Funcionalidades
+O projeto aplica arquitetura modular baseada em Orientação a Objetos (MVC adaptado) e implementa regras de integridade referencial na camada de aplicação, garantindo consistência entre as coleções relacionadas (`clientes`, `carros` e `locacoes`).
 
-- Cadastro, consulta e alteração de clientes e carros;
-- Desativação de clientes e carros, preservando seus registros no banco;
-- Cadastro, consulta, alteração e finalização de locações;
-- Exclusão permanente de clientes, carros e locações;
-- Registro da devolução dos veículos;
-- Relatórios relacionados às operações da locadora.
+---
 
-### Desativação e exclusão de registros
+## Funcionalidades Principais
 
-No menu principal, a opção **4** mantém a desativação de clientes e carros e a
-finalização de locações. Desativar um cliente ou carro altera seu status para
-inativo, sem remover o registro do banco de dados.
+* **Gestão de Entidades (CRUD Completo):** Cadastro, consulta, atualização e remoção de **Clientes**, **Carros** e **Locações**, com validação de chaves primárias (evitando duplicidade) e tipagem de entrada.
+* **Controle de Ciclo de Vida (Inativação Lógica vs. Exclusão Física):**
+  * **Opção 4 — Desativação / Finalização:** Permite inativar clientes e carros (alterando o status para inativo sem perda de histórico, bloqueando novas locações para esses registros) e registrar a devolução/finalização de locações em andamento.
+  * **Opção 5 — Exclusão Permanente com Integridade Referencial:** Lista os documentos com chave identificadora e campos descritivos, exige confirmação explícita e verifica dependências antes da remoção. Caso um cliente ou carro possua locações vinculadas, o sistema alerta o usuário e oferece a exclusão em cascata dos documentos dependentes; caso contrário, a operação é abortada para preservar a consistência referencial.
+* **Relatórios Analíticos (Aggregation Framework):**
+  * **Sumarização (`$group`):** Agrupamento de registros e cálculo de métricas consolidadas (ex.: total de locações e faturamento agrupados por veículo ou cliente).
+  * **Junção entre Coleções (`$lookup`):** Cruzamento de dados entre `locacoes`, `clientes` e `carros` para exibição de relatórios relacionais completos.
+* **Splash Screen Dinâmica:** Consulta em tempo real a contagem de documentos existentes em cada coleção no momento da inicialização.
 
-A opção **5** permite excluir permanentemente um cliente, um carro ou uma
-locação. O sistema lista os registros com suas chaves e campos descritivos,
-permite selecionar um deles por número e solicita confirmação antes de excluir.
-Para clientes ou carros que possuem locações vinculadas, o sistema pergunta se
-as locações também devem ser excluídas. Se a resposta for negativa, o registro
-principal não é removido; se for positiva, as locações relacionadas e o registro
-selecionado são excluídos na mesma transação.
+---
 
-## Tecnologias
+## Stack Tecnológica
 
-- Python;
-- MongoDB;
-- PyMongo (biblioteca para conexão e execução de comandos MongoDB).
-- 
-## Organização do projeto
+* **Linguagem:** Python 3.10+
+* **Banco de Dados:** MongoDB (NoSQL Orientado a Documentos)
+* **Driver Nativo:** PyMongo (`pymongo`)
+* **Gerenciador de Ambiente:** `uv` (Astral)
+* **Modelagem:** SQL Power Architect (Diagrama Relacional base)
 
-- `src/model`: classes que representam as entidades do sistema;
-- `src/controller`: classes responsáveis pelas operações CRUD nas coleções MongoDB;
-- `src/conexion`: conexão com o banco de dados MongoDB;
-- `src/reports`: relatórios do sistema utilizando Aggregation e Lookup;
-- `src/utils`: configurações dos menus e Splash Screen;
-- `src/sql`: consultas e comandos MongoDB utilizados nos relatórios, caso exista esse diretório;
-- `src/principal.py`: interface principal entre o usuário e o sistema;
-- `src/create_collections.py`: script responsável pela criação das coleções e inserção de documentos iniciais.
-  
-## Andamento do projeto
+---
 
-### Feito
+## Arquitetura e Organização do Projeto
 
-### Em andamento
-- [ ] Estruturação inicial
-### Pendente
-- [ ] Models (classes das entidades);
-- [ ] Controllers (operações CRUD no MongoDB);
-- [ ] Criação das coleções;
-- [ ] Diagrama relacional;
-- [ ] Reports (relatórios com Aggregation e Lookup);
-- [ ] Utils (menus e Splash Screen);
-- [ ] Principal (menu e fluxo de execução);
-- [ ] Script Python para criação das coleções;
-- [ ] Inserção de documentos;
-- [ ] Remoção de documentos;
-- [ ] Atualização de documentos;
-- [ ] README.md (documentação de execução no Linux);
-- [ ] Vídeo demonstrativo;
-- [ ] Testes.
-
-
-### Configuração do ambiente de desenvolvimento sem SUDO
-
-
-### 1. Instalação do `uv` sem sudo
-
-O ambiente Linux utiliza Python 3.12, incompatível com algumas das versões antigas de bibliotecas exigidas pelo projeto. Para evitar alterações na instalação global do Python e não depender de permissões administrativas, foi utilizado o **uv**, gerenciador de versões e ambientes Python.
-
-Instale o `uv` no diretório do usuário:
-
-```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
-```
-
-Caso o comando `uv` não seja encontrado após a instalação, adicione o diretório de instalação ao `PATH`. No ambiente utilizado, foi necessário executar:
-
-```bash
-export PATH="$HOME/snap/code/205/.local/bin:$PATH"
-```
-
-Esse caminho pode variar conforme o ambiente. Para conferir a instalação:
-
-```bash
-uv --version
-```
-
-### 2. Criação do ambiente Python 3.10
-
-Na pasta `src` do projeto, instale o Python 3.10 e crie o ambiente virtual:
-
-```bash
-uv python install 3.10
-uv venv .venv310 --python 3.10
-source .venv310/bin/activate
-```
-
-Com o ambiente ativado, instale as dependências:
-
-```bash
-uv pip install cx-Oracle==8.3.0 pandas==1.4.4 numpy==1.23.2
-```
-
-O ambiente virtual mantém as bibliotecas isoladas do Python global do sistema.
-
-### 3. Ajustes na conexão com o banco
-
-
-### 4. Configuração do banco de dados
-
-
-### 5. Execução e validação
-
-
+```text
+├── diagrams/                  # Diagrama relacional da base de dados (PDF/PNG)
+├── src/
+│   ├── conexion/              # Módulo de conexão com o servidor MongoDB e credenciais
+│   ├── model/                 # Classes de domínio (Cliente, Carro, Locacao) com getters/setters e to_string()
+│   ├── controller/            # Regras de negócio, validações de integridade e operações CRUD no MongoDB
+│   ├── reports/               # Consultas analíticas utilizando Aggregation Pipelines ($group e$lookup)
+│   ├── utils/                 # Configurações de menus, constantes e geração da Splash Screen
+│   ├── create_collections.py  # Script de inicialização das coleções e carga/migração de documentos
+│   └── principal.py           # Ponto de entrada da aplicação e controle de fluxo dos menus
+├── requirements.txt           # Dependências do projeto
+└── README.md                  # Documentação técnica e guia de execução
