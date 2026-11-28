@@ -9,30 +9,32 @@ def create_tables(query:str):
     list_of_commands = query.split(";")
 
     oracle = OracleQueries(can_write=True)
-    oracle.connect()
-
-    for command in list_of_commands:
-        command = command.strip()
-        if command:
-            print(command)
-            try:
+    try:
+        oracle.connect()
+        for command in list_of_commands:
+            command = command.strip()
+            if command:
+                print(command)
                 oracle.executeDDL(command)
                 print("Successfully executed")
-            except Exception as e:
-                    print(f"Falha ao executar comando SQL: {e}")
-                    raise
+    finally:
+        oracle.close()
+
+
 def generate_records(query:str, sep:str=';'):
     list_of_commands = query.split(sep)
 
     oracle = OracleQueries(can_write=True)
-    oracle.connect()
-
-    for command in list_of_commands:
-        command = command.strip()
-        if command:
-            print(command)
-            oracle.write(command)
-            print("Successfully executed")
+    try:
+        oracle.connect()
+        for command in list_of_commands:
+            command = command.strip()
+            if command:
+                print(command)
+                oracle.write(command)
+                print("Successfully executed")
+    finally:
+        oracle.close()
 
 def run():
 
@@ -42,13 +44,6 @@ def run():
     print("Creating tables...")
     create_tables(query=query_create)
     print("Tables successfully created!")
-
-    # with (SQL_DIR / "inserting_samples_records.sql").open(encoding="utf-8") as f:
-    #     query_generate_records = f.read()
-
-    # print("Gerenating records")
-    # generate_records(query=query_generate_records)
-    # print("Records successfully generated!")
 
     with (SQL_DIR / "inserirDados.sql").open(encoding="utf-8") as f:
         query_generate_records = f.read()
